@@ -94,7 +94,11 @@ def extract_height(q: str) -> int:
 def get_ffmpeg_location() -> str | None:
     """Find a usable FFmpeg binary — bundled (imageio_ffmpeg) or system.
     Returns the exact executable path so yt-dlp can use it directly."""
-    # 1. Try imageio_ffmpeg (bundled inside the PyInstaller exe)
+    # 1. Try PyInstaller bundled binaries (_MEIPASS)
+    if hasattr(sys, "_MEIPASS"):
+        return sys._MEIPASS
+
+    # 2. Try imageio_ffmpeg
     try:
         import imageio_ffmpeg
         ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
@@ -103,18 +107,18 @@ def get_ffmpeg_location() -> str | None:
     except Exception:
         pass
 
-    # 2. Try shutil.which — works on Windows, macOS, Linux
+    # 3. Try shutil.which — works on Windows, macOS, Linux
     which_result = shutil.which("ffmpeg")
     if which_result:
         return which_result
 
-    # 3. Check common macOS/Linux locations
+    # 4. Check common macOS/Linux locations
     for p in ["/usr/local/bin/ffmpeg", "/opt/homebrew/bin/ffmpeg",
               os.path.expanduser("~/.local/bin/ffmpeg")]:
         if os.path.isfile(p):
             return p
 
-    # 4. Check common Windows locations
+    # 5. Check common Windows locations
     if sys.platform == "win32":
         for p in [
             os.path.join(os.environ.get("LOCALAPPDATA", ""), "ffmpeg", "bin", "ffmpeg.exe"),
@@ -162,6 +166,11 @@ class UnidownApp(ctk.CTk):
         self.geometry("760x780")
         self.minsize(620, 600)
         self.configure(fg_color=BG_COLOR)
+        
+        # Set window icon
+        icon_path = os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))), "AppIcon.ico")
+        if os.path.exists(icon_path):
+            self.iconbitmap(icon_path)
 
         # ── State ──
         self.fetched_url = ""
@@ -193,12 +202,20 @@ class UnidownApp(ctk.CTk):
                      font=ctk.CTkFont(size=13),
                      text_color=TXT2).pack(anchor="w")
 
-        # Right side — about button
-        ctk.CTkButton(header, text="About", width=60, height=26,
+        # Right side — about button & donate button
+        btn_frame = ctk.CTkFrame(header, fg_color="transparent")
+        btn_frame.pack(side="right")
+
+        ctk.CTkButton(btn_frame, text="Donate", width=60, height=26,
+                      fg_color=ACCENT_COLOR, hover_color=ACCENT_DK,
+                      border_width=0, text_color=TXT1, font=ctk.CTkFont(size=11, weight="bold"),
+                      command=self._donate_pressed).pack(side="left", padx=(0, 8))
+
+        ctk.CTkButton(btn_frame, text="About", width=60, height=26,
                       fg_color=CARD_COLOR, hover_color=BORDER_COLOR,
                       border_width=1, border_color=BORDER_COLOR,
                       text_color=TXT1, font=ctk.CTkFont(size=11),
-                      command=self._about_pressed).pack(side="right")
+                      command=self._about_pressed).pack(side="left")
 
         # ── URL Card ──
         url_card = ctk.CTkFrame(self, fg_color=CARD_COLOR, corner_radius=12,
@@ -391,6 +408,14 @@ class UnidownApp(ctk.CTk):
                      justify="center").pack(pady=(10, 0))
         ctk.CTkLabel(win, text="Thank you for your support!",
                      font=ctk.CTkFont(size=12), text_color=SUCCESS_COLOR).pack(pady=(8, 0))
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # Donate
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    def _donate_pressed(self):
+        import webbrowser
+        webbrowser.open("https://www.buymeacoffee.com/lugalsiyabonga")
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     # Browse
