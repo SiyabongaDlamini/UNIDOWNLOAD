@@ -93,26 +93,26 @@ def extract_height(q: str) -> int:
 
 def get_ffmpeg_location() -> str | None:
     """Find a usable FFmpeg binary — bundled (imageio_ffmpeg) or system.
-    Returns the DIRECTORY containing ffmpeg so yt-dlp can locate it."""
+    Returns the exact executable path so yt-dlp can use it directly."""
     # 1. Try imageio_ffmpeg (bundled inside the PyInstaller exe)
     try:
         import imageio_ffmpeg
         ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
         if ffmpeg_exe and os.path.isfile(ffmpeg_exe):
-            return os.path.dirname(ffmpeg_exe)
+            return ffmpeg_exe
     except Exception:
         pass
 
     # 2. Try shutil.which — works on Windows, macOS, Linux
     which_result = shutil.which("ffmpeg")
     if which_result:
-        return os.path.dirname(which_result)
+        return which_result
 
     # 3. Check common macOS/Linux locations
     for p in ["/usr/local/bin/ffmpeg", "/opt/homebrew/bin/ffmpeg",
               os.path.expanduser("~/.local/bin/ffmpeg")]:
         if os.path.isfile(p):
-            return os.path.dirname(p)
+            return p
 
     # 4. Check common Windows locations
     if sys.platform == "win32":
@@ -122,10 +122,9 @@ def get_ffmpeg_location() -> str | None:
             os.path.join(os.environ.get("ProgramFiles(x86)", ""), "ffmpeg", "bin", "ffmpeg.exe"),
         ]:
             if p and os.path.isfile(p):
-                return os.path.dirname(p)
+                return p
 
     return None
-
 
 def has_ffmpeg() -> bool:
     """Quick check if FFmpeg is available anywhere."""
