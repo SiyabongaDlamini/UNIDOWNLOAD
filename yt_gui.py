@@ -370,7 +370,7 @@ class UnidownApp(ctk.CTk):
         self.log_area.pack(fill="both", expand=True, padx=24, pady=(0, 8))
 
         # ── Version Label ──
-        ctk.CTkLabel(self, text="v1.0.0", font=ctk.CTkFont(size=10),
+        ctk.CTkLabel(self, text="v2.0.0", font=ctk.CTkFont(size=10),
                      text_color=TXT3).pack(anchor="e", padx=24, pady=(0, 8))
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -397,7 +397,7 @@ class UnidownApp(ctk.CTk):
         win.resizable(False, False)
         win.grab_set()
 
-        ctk.CTkLabel(win, text="Unidown v1.0.0",
+        ctk.CTkLabel(win, text="Unidown v2.0.0",
                      font=ctk.CTkFont(size=18, weight="bold"),
                      text_color=TXT1).pack(pady=(24, 6))
         ctk.CTkLabel(win, text="A universal video downloader\npowered by yt-dlp.",
