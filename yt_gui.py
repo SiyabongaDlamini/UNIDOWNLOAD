@@ -415,7 +415,7 @@ class UnidownApp(ctk.CTk):
 
     def _donate_pressed(self):
         import webbrowser
-        webbrowser.open("https://www.buymeacoffee.com/lugalsiyabonga")
+        webbrowser.open("https://whop.com/checkout/plan_BqfnoKdAIyRMV")
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     # Browse
