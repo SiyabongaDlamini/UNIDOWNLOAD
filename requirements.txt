@@ -1,2 +1,5 @@
 customtkinter==5.2.2
 yt-dlp
+Pillow
+requests
+imageio-ffmpeg

@@ -25,7 +25,7 @@ jobs:
 
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --noconfirm --onefile --windowed --collect-all customtkinter --name "Unidown" "yt_gui.py"
+        pyinstaller --noconfirm --onefile --windowed --collect-all customtkinter --collect-all imageio_ffmpeg --name "Unidown" "yt_gui.py"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4

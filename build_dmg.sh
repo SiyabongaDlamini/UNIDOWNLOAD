@@ -20,6 +20,10 @@ swiftc -O -framework Cocoa \
     -o "${APP_NAME}.app/Contents/MacOS/${APP_NAME}" \
     Unidown.swift
 
+echo "🔏 Step 1b: Ad-hoc code signing..."
+codesign --force --deep -s - "${APP_NAME}.app"
+echo "   Signed with ad-hoc identity."
+
 echo "📦 Step 2: Preparing DMG staging..."
 rm -rf "${STAGING}"
 mkdir -p "${STAGING}"
