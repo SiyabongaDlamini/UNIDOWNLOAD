@@ -1,8 +1,38 @@
+# ── Build artifacts ──
 *.dmg
-*.app
+*.app/
 *.pyc
 __pycache__/
 build/
 dist/
 *.spec
+*.exe
+
+# ── macOS ──
 .DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# ── IDE / Editor ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Python virtualenv ──
+venv/
+.venv/
+env/
+.env
+
+# ── macOS build intermediaries ──
+dmg_staging/
+*.app.dSYM/
+
+# ── Sensitive / private ──
+AppIcon.icns
+Info.plist
+build_dmg.sh

@@ -12,7 +12,6 @@ import re
 import json
 import subprocess
 import shutil
-import webbrowser
 from io import BytesIO
 
 import yt_dlp
@@ -34,8 +33,7 @@ TXT1          = "#FFFFFF"
 TXT2          = "#8C8C8C"
 TXT3          = "#616161"
 LOG_GREEN     = "#8CD28C"
-DONATE_COLOR  = "#FF9926"
-DONATE_DK     = "#E68014"
+
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
@@ -196,34 +194,12 @@ class UnidownApp(ctk.CTk):
                      font=ctk.CTkFont(size=13),
                      text_color=TXT2).pack(anchor="w")
 
-        # Right side — donate buttons & about
-        btn_col = ctk.CTkFrame(header, fg_color="transparent")
-        btn_col.pack(side="right", fill="y")
-
-        about_donate_row = ctk.CTkFrame(btn_col, fg_color="transparent")
-        about_donate_row.pack(anchor="e")
-
-        ctk.CTkButton(about_donate_row, text="About", width=60, height=26,
+        # Right side — about button
+        ctk.CTkButton(header, text="About", width=60, height=26,
                       fg_color=CARD_COLOR, hover_color=BORDER_COLOR,
                       border_width=1, border_color=BORDER_COLOR,
                       text_color=TXT1, font=ctk.CTkFont(size=11),
-                      command=self._about_pressed).pack(side="left", padx=(0, 6))
-
-        ctk.CTkButton(about_donate_row, text="☕ Coffee for the Developer",
-                      width=220, height=26,
-                      fg_color=DONATE_COLOR, hover_color=DONATE_DK,
-                      text_color="white", font=ctk.CTkFont(size=11, weight="bold"),
-                      command=lambda: webbrowser.open(
-                          "https://whop.com/checkout/plan_cpgtvy36ujS7A")
-                      ).pack(side="left")
-
-        ctk.CTkButton(btn_col, text="❤️ Keep Unidown Free",
-                      width=220, height=26,
-                      fg_color=DONATE_COLOR, hover_color=DONATE_DK,
-                      text_color="white", font=ctk.CTkFont(size=11, weight="bold"),
-                      command=lambda: webbrowser.open(
-                          "https://whop.com/checkout/plan_BqfnoKdAIyRMV")
-                      ).pack(anchor="e", pady=(4, 0))
+                      command=self._about_pressed).pack(side="right")
 
         # ── URL Card ──
         url_card = ctk.CTkFrame(self, fg_color=CARD_COLOR, corner_radius=12,

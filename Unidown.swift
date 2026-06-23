@@ -1,5 +1,4 @@
 import Cocoa
-import WebKit
 
 // ═══════════════════════════════════════════════════════════════
 // MARK: - Theme
@@ -17,8 +16,6 @@ struct Theme {
     static let txt2     = NSColor(white: 0.55, alpha: 1)
     static let txt3     = NSColor(white: 0.38, alpha: 1)
     static let logGreen = NSColor(red: 0.55, green: 0.82, blue: 0.55, alpha: 1)
-    static let donate  = NSColor(red: 1.0, green: 0.60, blue: 0.15, alpha: 1)
-    static let donateDk = NSColor(red: 0.90, green: 0.50, blue: 0.08, alpha: 1)
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -61,51 +58,7 @@ func heightLabel(_ h: Int) -> String {
     return "\(h)p"
 }
 
-// ═══════════════════════════════════════════════════════════════
-// MARK: - In-App Checkout Window
-// ═══════════════════════════════════════════════════════════════
 
-class CheckoutWindow: NSObject {
-    private var window: NSWindow?
-    private var webView: WKWebView?
-
-    func open(urlString: String, title: String) {
-        // If window already exists, bring it forward
-        if let existing = window, existing.isVisible {
-            existing.makeKeyAndOrderFront(nil)
-            if let url = URL(string: urlString) {
-                webView?.load(URLRequest(url: url))
-            }
-            return
-        }
-
-        let scr = NSScreen.main?.frame ?? NSRect(x:0,y:0,width:1440,height:900)
-        let w: CGFloat = 520, h: CGFloat = 720
-        let win = NSWindow(
-            contentRect: NSRect(x: (scr.width-w)/2, y: (scr.height-h)/2, width: w, height: h),
-            styleMask: [.titled, .closable, .resizable, .miniaturizable],
-            backing: .buffered, defer: false)
-        win.title = title
-        win.minSize = NSSize(width: 400, height: 500)
-        win.appearance = NSAppearance(named: .darkAqua)
-        win.backgroundColor = Theme.bg
-        win.isReleasedWhenClosed = false
-
-        let config = WKWebViewConfiguration()
-        let wv = WKWebView(frame: win.contentView!.bounds, configuration: config)
-        wv.autoresizingMask = [.width, .height]
-        wv.setValue(false, forKey: "drawsBackground")
-        win.contentView?.addSubview(wv)
-
-        if let url = URL(string: urlString) {
-            wv.load(URLRequest(url: url))
-        }
-
-        win.makeKeyAndOrderFront(nil)
-        self.window = win
-        self.webView = wv
-    }
-}
 
 // ═══════════════════════════════════════════════════════════════
 // MARK: - App Delegate
@@ -181,8 +134,7 @@ class MainVC: NSViewController {
     private var logView: NSTextView!
     private var logScroll: NSScrollView!
 
-    // ── Donate ──
-    private var checkoutWindow = CheckoutWindow()
+
 
     // ── State ──
     private var isFetching = false
@@ -220,25 +172,9 @@ class MainVC: NSViewController {
         sub.autoresizingMask = [.minYMargin]
         view.addSubview(sub)
 
-        // ── Donate Buttons & About (top-right) ──
-        let don1 = mkButton("☕ Coffee for the Developer",
-                            rect: NSRect(x: vw - pad - 240, y: y + 22, width: 240, height: 24),
-                            bg: Theme.donate, fg: .white)
-        don1.font = NSFont.boldSystemFont(ofSize: 11)
-        don1.autoresizingMask = [.minXMargin, .minYMargin]
-        don1.target = self; don1.action = #selector(donate1Pressed)
-        view.addSubview(don1)
-
-        let don2 = mkButton("❤️ Keep Unidown Free",
-                            rect: NSRect(x: vw - pad - 240, y: y - 4, width: 240, height: 24),
-                            bg: Theme.donate, fg: .white)
-        don2.font = NSFont.boldSystemFont(ofSize: 11)
-        don2.autoresizingMask = [.minXMargin, .minYMargin]
-        don2.target = self; don2.action = #selector(donate2Pressed)
-        view.addSubview(don2)
-
+        // ── About Button (top-right) ──
         let aboutBtn = mkButton("About",
-                                rect: NSRect(x: vw - pad - 240 - 70, y: y + 22, width: 60, height: 24),
+                                rect: NSRect(x: vw - pad - 70, y: y + 22, width: 60, height: 24),
                                 bg: Theme.cardBg, fg: Theme.txt1)
         aboutBtn.font = NSFont.systemFont(ofSize: 11)
         aboutBtn.layer?.borderWidth = 1; aboutBtn.layer?.borderColor = Theme.border.cgColor
@@ -822,24 +758,6 @@ class MainVC: NSViewController {
 
     private func main(_ block: @escaping () -> Void) {
         DispatchQueue.main.async(execute: block)
-    }
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // MARK: Donate
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-    @objc private func donate1Pressed() {
-        checkoutWindow.open(
-            urlString: "https://whop.com/checkout/plan_cpgtvy36ujS7A",
-            title: "☕ Coffee for the Developer — $3"
-        )
-    }
-
-    @objc private func donate2Pressed() {
-        checkoutWindow.open(
-            urlString: "https://whop.com/checkout/plan_BqfnoKdAIyRMV",
-            title: "Keep Unidown Free — $5"
-        )
     }
 
     @objc private func aboutPressed() {
